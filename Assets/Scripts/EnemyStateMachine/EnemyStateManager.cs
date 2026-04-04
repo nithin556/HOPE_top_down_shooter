@@ -8,8 +8,11 @@ public class EnemyStateManager : MonoBehaviour
     public EnemyChaseState enemyChaseState = new EnemyChaseState();
     public EnemyAttackState enemyAttackState = new EnemyAttackState();
 
+    [SerializeField] public TowerScript tower;
+
     void Start()
     {
+
         currentState = enemyIdleState;
         currentState.OnEnter(this);
     }
