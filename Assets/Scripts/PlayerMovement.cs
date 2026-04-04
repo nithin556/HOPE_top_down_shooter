@@ -5,9 +5,83 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameInput gameInput;
     [SerializeField] private Camera main_camera;
     [SerializeField] private float moveSpeed;
+    [SerializeField] private float rotateSpeed;
+    [SerializeField] private float hoverHeight;
+    [SerializeField] private float maxClearHeight;
+    [SerializeField] private float minClearHeight;
+    [SerializeField] private float maxDist;
+    [SerializeField] private float springStrength;
+    [SerializeField] private float dampingStrength;
+    [SerializeField] private float gravity;
+    private float springAcc;
+    private float compression;
     private Vector3 movedir;
 
+    private float velY;
+
     void Update()
+    {
+        Movement();
+
+    }
+
+    private void Movement()
+    {
+        BasicMovement();
+        SpringDamper();
+        //Quaternion currentRotation = transform.rotation;
+        //Quaternion targetRotation = Quaternion.LookRotation(movedir, Vector3.up);
+        //transform.rotation = Quaternion.Slerp(currentRotation, targetRotation,Time.deltaTime * rotateSpeed);
+    }
+
+    private void SpringDamper()
+    {
+        float totalAcc = 0f;
+        totalAcc += gravity;
+
+        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDist);
+
+        if (isGrounded)
+        {
+            compression = hoverHeight - hit.distance;
+            if (compression > 0f)
+            {
+                springAcc = (springStrength * compression) - (velY * dampingStrength);
+                totalAcc += springAcc;
+            }
+        }
+
+        velY += totalAcc * Time.deltaTime;
+        Vector3 posY = transform.position;
+        posY.y += velY * Time.deltaTime;
+
+        if (isGrounded)
+        {
+            float minY = hit.point.y + minClearHeight;
+            float maxY = hit.point.y + maxClearHeight;
+
+            if (posY.y < minY)// if pos less than min height
+            {
+                if (velY < 0f)// if its coming down
+                {
+                    velY = 0;
+                    posY.y = minY;
+                }
+            }
+            if (posY.y > maxY) // if pos greater than max height
+            {
+                if (velY > 0f)// if it's going up
+                {
+                    velY = 0;
+                    posY.y = maxY;
+                }
+            }
+        }
+
+        transform.position = posY + (movedir * moveSpeed * Time.deltaTime);
+    }
+
+    private void BasicMovement()
     {
         Vector2 rawInputVector = gameInput.GetMovementVector();
         Vector3 refactoredInput = new Vector3(rawInputVector.x, 0, rawInputVector.y);
@@ -20,7 +94,13 @@ public class PlayerMovement : MonoBehaviour
         cam_right.Normalize();
 
         movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
-        transform.position += movedir * moveSpeed * Time.deltaTime;
+    }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.darkRed;
+        Gizmos.DrawRay(transform.position, Vector3.down * maxDist);
+        Gizmos.color = Color.darkGreen;
+        Gizmos.DrawRay(transform.position, Vector3.down * hoverHeight);
     }
 }
