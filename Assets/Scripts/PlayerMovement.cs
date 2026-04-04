@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     private float springAcc;
     private float compression;
     private Vector3 movedir;
+    
 
     private float velY;
 
@@ -29,9 +30,21 @@ public class PlayerMovement : MonoBehaviour
     {
         BasicMovement();
         SpringDamper();
-        //Quaternion currentRotation = transform.rotation;
-        //Quaternion targetRotation = Quaternion.LookRotation(movedir, Vector3.up);
-        //transform.rotation = Quaternion.Slerp(currentRotation, targetRotation,Time.deltaTime * rotateSpeed);
+        SmoothRotate();
+    }
+    private void BasicMovement()
+    {
+        Vector2 rawInputVector = gameInput.GetMovementVector();
+        Vector3 refactoredInput = new Vector3(rawInputVector.x, 0, rawInputVector.y);
+
+        Vector3 cam_forward = main_camera.transform.forward;
+        Vector3 cam_right = main_camera.transform.right;
+        cam_forward.y = 0;
+        cam_right.y = 0;
+        cam_forward.Normalize();
+        cam_right.Normalize();
+
+        movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
     }
 
     private void SpringDamper()
@@ -80,21 +93,22 @@ public class PlayerMovement : MonoBehaviour
 
         transform.position = posY + (movedir * moveSpeed * Time.deltaTime);
     }
-
-    private void BasicMovement()
+    private void SmoothRotate()
     {
-        Vector2 rawInputVector = gameInput.GetMovementVector();
-        Vector3 refactoredInput = new Vector3(rawInputVector.x, 0, rawInputVector.y);
-
-        Vector3 cam_forward = main_camera.transform.forward;
-        Vector3 cam_right = main_camera.transform.right;
-        cam_forward.y = 0;
-        cam_right.y = 0;
-        cam_forward.Normalize();
-        cam_right.Normalize();
-
-        movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
+        Quaternion currentRotation = transform.rotation;
+        Quaternion targetRotation;
+        if (movedir != Vector3.zero)
+        {
+            targetRotation = Quaternion.LookRotation(movedir, Vector3.up);
+        }
+        else
+        {
+            targetRotation = transform.rotation;
+        }
+        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotateSpeed);
     }
+
+    
 
     void OnDrawGizmos()
     {
