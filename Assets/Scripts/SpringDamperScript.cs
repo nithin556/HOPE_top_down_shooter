@@ -9,10 +9,11 @@ public class SpringDamperScript : MonoBehaviour
     [SerializeField] private float springStrength;
     [SerializeField] private float dampingStrength;
     [SerializeField] private float gravity;
-    [SerializeField] private float scaleFactor;
+
     [SerializeField] private Transform enemyModel;
     private float springAcc;
     private float compression;
+    public float totalAcc { get; private set; }
 
     private float velY;
 
@@ -23,7 +24,7 @@ public class SpringDamperScript : MonoBehaviour
 
     private void SpringDamp()
     {
-        float totalAcc = 0f;
+        totalAcc = 0f;
         totalAcc += gravity;
 
         bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDist);
@@ -66,10 +67,6 @@ public class SpringDamperScript : MonoBehaviour
         }
 
         transform.position = posY;
-
-        //Vector3 scaleY = enemyModel.transform.localScale;
-        //scaleY.y = velY;
-        //enemyModel.transform.localScale = scaleY * scaleFactor;
     }
 
 }
