@@ -1,3 +1,4 @@
+//using System.Numerics;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -17,8 +18,9 @@ public class PlayerMovement : MonoBehaviour
     private float compression;
     private Vector3 movedir;
     
-
     private float velY;
+
+    [SerializeField] private float MaxDistanceRaycastForward;
 
     void Update()
     {
@@ -43,8 +45,37 @@ public class PlayerMovement : MonoBehaviour
         cam_right.y = 0;
         cam_forward.Normalize();
         cam_right.Normalize();
-
         movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
+
+        //if something in front of the player, stop movement
+        if(Physics.Raycast(transform.position, movedir, out RaycastHit hit, MaxDistanceRaycastForward))
+        {
+            //try along movedir x axis
+            Vector3 movedirX = new Vector3(movedir.x, 0, 0);
+            Vector3 movedirZ = new Vector3(0, 0, movedir.z);
+            movedir = Vector3.zero;
+
+            //if u dont hit anything alongx
+            if(!Physics.Raycast(transform.position, movedirX, out RaycastHit hitX, MaxDistanceRaycastForward))
+            {
+                movedir = movedirX;
+            }
+
+            //if u hit along x then try y
+            else
+            {
+                //if u dont hit anything in y axis
+                if(!Physics.Raycast(transform.position, movedirZ, out RaycastHit hitX2, MaxDistanceRaycastForward))
+                {
+                    movedir = movedirZ;
+                    
+                }
+            }
+        }
+
+       
+        
+
     }
 
     private void SpringDamper()
