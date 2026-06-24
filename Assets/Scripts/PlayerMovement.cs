@@ -1,21 +1,14 @@
-//using System.Numerics;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    
+    [SerializeField] private bool playerControlled;
 
     [SerializeField] private GameInput gameInput;
     [SerializeField] private Camera main_camera;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
-    [SerializeField] private float hoverHeight;
-    [SerializeField] private float maxClearHeight;
-    [SerializeField] private float minClearHeight;
-    [SerializeField] private float maxDist;
-    [SerializeField] private float springStrength;
-    [SerializeField] private float dampingStrength;
-    [SerializeField] private float gravity;
+
     private float springAcc;
     private float compression;
     private Vector3 movedir;
@@ -23,11 +16,18 @@ public class PlayerMovement : MonoBehaviour
     private float velY;
 
     [SerializeField] private float MaxDistanceRaycastForward;
+    private SpringDamperScript springDamperScript;
+    private void Start()
+    {
+        springDamperScript = GetComponent<SpringDamperScript>();
+    }
 
     void Update()
     {
-        Movement();
-
+        if (playerControlled)
+        {
+            Movement();
+        }
     }
 
     private void Movement()
@@ -49,62 +49,17 @@ public class PlayerMovement : MonoBehaviour
         cam_right.Normalize();
         movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
 
-        //if something in front of the player, stop movement
-        if(Physics.Raycast(transform.position, movedir, out RaycastHit hit, MaxDistanceRaycastForward))
+        //slide along wall
+        if(Physics.SphereCast(transform.position,0.5f,movedir, out RaycastHit hit, MaxDistanceRaycastForward))
         {
             movedir = Vector3.ProjectOnPlane(movedir,hit.normal);
         }
-
-       
         
-
     }
 
     private void SpringDamper()
     {
-        float totalAcc = 0f;
-        totalAcc += gravity;
-
-        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDist);
-
-        if (isGrounded)
-        {
-            compression = hoverHeight - hit.distance;
-            if (compression > 0f)
-            {
-                springAcc = (springStrength * compression) - (velY * dampingStrength);
-                totalAcc += springAcc;
-            }
-        }
-
-        velY += totalAcc * Time.deltaTime;
-        Vector3 posY = transform.position;
-        posY.y += velY * Time.deltaTime;
-
-        if (isGrounded)
-        {
-            float minY = hit.point.y + minClearHeight;
-            float maxY = hit.point.y + maxClearHeight;
-
-            if (posY.y < minY)// if pos less than min height
-            {
-                if (velY < 0f)// if its coming down
-                {
-                    velY = 0;
-                    posY.y = minY;
-                }
-            }
-            if (posY.y > maxY) // if pos greater than max height
-            {
-                if (velY > 0f)// if it's going up
-                {
-                    velY = 0;
-                    posY.y = maxY;
-                }
-            }
-        }
-
-        transform.position = posY + (movedir * moveSpeed * Time.deltaTime);
+        transform.position = springDamperScript.GetSpringDampPos() + (movedir * moveSpeed * Time.deltaTime);
     }
     private void SmoothRotate()
     {
@@ -121,13 +76,6 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotateSpeed);
     }
 
-    
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.darkRed;
-        Gizmos.DrawRay(transform.position, Vector3.down * maxDist);
-        Gizmos.color = Color.darkGreen;
-        Gizmos.DrawRay(transform.position, Vector3.down * hoverHeight);
-    }
+
 }

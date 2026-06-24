@@ -10,14 +10,14 @@ public class SpringDamperScript : MonoBehaviour
     [SerializeField] private float dampingStrength;
     [SerializeField] private float gravity;
 
-    [SerializeField] private Transform enemyModel;
     private float springAcc;
     private float compression;
     public float totalAcc { get; private set; }
+    private Vector3 posY;
 
     private float velY;
 
-    void Update()
+    private void Update()
     {
         SpringDamp();
     }
@@ -40,7 +40,7 @@ public class SpringDamperScript : MonoBehaviour
         }
 
         velY += totalAcc * Time.deltaTime;
-        Vector3 posY = transform.position;
+        posY = transform.position;
         posY.y += velY * Time.deltaTime;
 
         if (isGrounded)
@@ -68,5 +68,18 @@ public class SpringDamperScript : MonoBehaviour
 
         transform.position = posY;
     }
+    public Vector3 GetSpringDampPos()
+    {
+        return posY;
+    }
+    
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.darkRed;
+        Gizmos.DrawRay(transform.position, Vector3.down * maxDist);
+        Gizmos.color = Color.darkGreen;
+        Gizmos.DrawRay(transform.position, Vector3.down * hoverHeight);
+    }
+
 
 }
