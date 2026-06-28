@@ -3,11 +3,14 @@ using UnityEngine;
 public class SquishSquashVisuals : MonoBehaviour
 {
     [SerializeField] private float scaleFactor;
-    private SpringDamperScript springDamper;
+    private Vector3 currentPos;
+    private Vector3 prevPos;
+    private Vector3 displacement;
+    private Vector3 velocity;
+    private Vector3 zeroVector ;
     void Start()
     {
-        springDamper = GetComponentInParent<SpringDamperScript>();
-        
+        prevPos = transform.position;
     }
 
     void Update()
@@ -17,11 +20,13 @@ public class SquishSquashVisuals : MonoBehaviour
 
     void SquishSquash()
     {
-        Vector3 scaleY = transform.localScale;
-        scaleY.y = Mathf.Clamp(springDamper.totalAcc,1f,1f*scaleFactor);
-        scaleY.x = 1 / scaleY.y;
-        scaleY.z = 1 / scaleY.y;
-        Vector3 smoothScale = Vector3.Lerp(transform.localScale, scaleY,Time.deltaTime);
-        transform.localScale = smoothScale;
+        displacement = transform.position - prevPos;
+        velocity = displacement/Time.deltaTime;
+
+        
+    }
+    void LateUpdate()
+    {
+        prevPos = transform.position;
     }
 }

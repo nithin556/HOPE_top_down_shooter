@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private bool playerControlled;
+    public bool playerControlled;
 
     [SerializeField] private GameInput gameInput;
     [SerializeField] private Camera main_camera;
@@ -15,7 +15,8 @@ public class PlayerMovement : MonoBehaviour
     
     private float velY;
 
-    [SerializeField] private float MaxDistanceRaycastForward;
+    [SerializeField] private float MaxDistanceSphereCast;
+    [SerializeField] private LayerMask wallLayerMask;
     private SpringDamperScript springDamperScript;
     private void Start()
     {
@@ -50,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
         movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
 
         //slide along wall
-        if(Physics.SphereCast(transform.position,0.5f,movedir, out RaycastHit hit, MaxDistanceRaycastForward))
+        if(Physics.SphereCast(transform.position,0.5f,movedir, out RaycastHit hit, MaxDistanceSphereCast, wallLayerMask))
         {
             movedir = Vector3.ProjectOnPlane(movedir,hit.normal);
         }
@@ -60,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
     private void SpringDamper()
     {
         transform.position = springDamperScript.GetSpringDampPos() + (movedir * moveSpeed * Time.deltaTime);
+
     }
     private void SmoothRotate()
     {

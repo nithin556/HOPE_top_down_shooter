@@ -15,7 +15,11 @@ public class SpringDamperScript : MonoBehaviour
     public float totalAcc { get; private set; }
     private Vector3 posY;
 
-    private float velY;
+    public float velY { get; private set; }
+    void Start()
+    {
+        posY = transform.position;
+    }
 
     private void Update()
     {
@@ -65,8 +69,6 @@ public class SpringDamperScript : MonoBehaviour
                 }
             }
         }
-
-        transform.position = posY;
     }
     public Vector3 GetSpringDampPos()
     {
