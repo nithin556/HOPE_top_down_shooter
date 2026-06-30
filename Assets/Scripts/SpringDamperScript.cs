@@ -11,11 +11,11 @@ public class SpringDamperScript : MonoBehaviour
     [SerializeField] private float gravity;
 
     private float springAcc;
-    private float compression;
-    public float totalAcc { get; private set; }
+    private float totalAcc;
+    public float compression {get; private set; }
+    public float velY { get; private set; }
     private Vector3 posY;
 
-    public float velY { get; private set; }
     void Start()
     {
         posY = transform.position;
@@ -43,8 +43,8 @@ public class SpringDamperScript : MonoBehaviour
             }
         }
 
+        posY = transform.position;// cache currentpos
         velY += totalAcc * Time.deltaTime;
-        posY = transform.position;
         posY.y += velY * Time.deltaTime;
 
         if (isGrounded)

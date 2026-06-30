@@ -1,16 +1,16 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class SquishSquashVisuals : MonoBehaviour
 {
     [SerializeField] private float scaleFactor;
-    private Vector3 currentPos;
-    private Vector3 prevPos;
-    private Vector3 displacement;
-    private Vector3 velocity;
-    private Vector3 zeroVector ;
+    [SerializeField] private float compressionMult;
+    private SpringDamperScript springDamperScript;
+    private Vector3 baseScale;
     void Start()
     {
-        prevPos = transform.position;
+        springDamperScript = GetComponentInParent<SpringDamperScript>();
+        baseScale = transform.localScale;
     }
 
     void Update()
@@ -20,13 +20,30 @@ public class SquishSquashVisuals : MonoBehaviour
 
     void SquishSquash()
     {
-        displacement = transform.position - prevPos;
-        velocity = displacement/Time.deltaTime;
-
         
-    }
-    void LateUpdate()
-    {
-        prevPos = transform.position;
+        float squishCompression = springDamperScript.compression;
+        Vector3 customScale = baseScale;
+
+        //if compression is zero then stretch
+        if(squishCompression < 0f)
+        {
+            float result = Mathf.Abs(springDamperScript.velY);
+            result = Mathf.Clamp(result,1f,scaleFactor);
+            customScale.y = result;
+            customScale.x = customScale.x/Mathf.Sqrt(result);
+            customScale.z = customScale.z/Mathf.Sqrt(result);
+            
+            squishCompression = 0f;
+        }
+        //if positive then squish using compress variable
+        else
+        {
+            float customCompression = Mathf.Clamp(squishCompression * compressionMult,1f,scaleFactor);
+            customScale.x = customCompression;
+            customScale.z = customCompression;
+            customScale.y = customScale.y/Mathf.Sqrt(customCompression);
+        }
+
+        transform.localScale = customScale;
     }
 }
