@@ -2,22 +2,15 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public bool playerControlled;
-
     [SerializeField] private GameInput gameInput;
     [SerializeField] private Camera main_camera;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
-
-    private float springAcc;
-    private float compression;
-    private Vector3 movedir;
-    
-    private float velY;
-
     [SerializeField] private float MaxDistanceSphereCast;
     [SerializeField] private LayerMask wallLayerMask;
     private SpringDamperScript springDamperScript;
+    private Vector3 movedir;
+    public bool playerControlled;
     private void Start()
     {
         springDamperScript = GetComponent<SpringDamperScript>();
@@ -34,7 +27,14 @@ public class PlayerMovement : MonoBehaviour
     private void Movement()
     {
         BasicMovement();
-        SpringDamper();
+        if(springDamperScript.enabled == true)
+        {
+            transform.position = springDamperScript.GetSpringDampPos() + (movedir * moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.position += movedir * moveSpeed * Time.deltaTime;
+        }
         SmoothRotate();
     }
     private void BasicMovement()
@@ -55,14 +55,8 @@ public class PlayerMovement : MonoBehaviour
         {
             movedir = Vector3.ProjectOnPlane(movedir,hit.normal);
         }
-        
     }
 
-    private void SpringDamper()
-    {
-        transform.position = springDamperScript.GetSpringDampPos() + (movedir * moveSpeed * Time.deltaTime);
-
-    }
     private void SmoothRotate()
     {
         Quaternion currentRotation = transform.rotation;
@@ -77,7 +71,4 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotateSpeed);
     }
-
-
-
 }
