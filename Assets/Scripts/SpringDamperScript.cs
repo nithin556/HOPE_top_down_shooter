@@ -11,9 +11,9 @@ public class SpringDamperScript : MonoBehaviour
     [SerializeField] private float gravity;
 
     private float springAcc;
-    private float totalAcc;
+    public float totalAcc {get; set;}
     public float compression {get; private set; }
-    public float velY { get; private set; }
+    public float velY {get; set;}
     private Vector3 posY;
 
     void Start()
