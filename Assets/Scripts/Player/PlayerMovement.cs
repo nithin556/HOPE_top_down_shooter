@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
         //slide along wall
         if(Physics.SphereCast(transform.position,0.5f,movedir, out RaycastHit hit, MaxDistanceSphereCast, wallLayerMask))
         {
-            movedir = Vector3.ProjectOnPlane(movedir,hit.normal);
+            movedir = Vector3.ProjectOnPlane(movedir,hit.normal).normalized;
         }
     }
 
