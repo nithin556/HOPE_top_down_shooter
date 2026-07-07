@@ -9,11 +9,12 @@ public class SpringDamperScript : MonoBehaviour
     [SerializeField] private float springStrength;
     [SerializeField] private float dampingStrength;
     [SerializeField] private float gravity;
+    [SerializeField] private LayerMask interactableLayers;
 
     private float springAcc;
-    public float totalAcc {get; set;}
-    public float compression {get; private set; }
-    public float velY {get; set;}
+    public float totalAcc { get; set; }
+    public float compression { get; private set; }
+    public float velY { get; set; }
     private Vector3 posY;
 
     void Start()
@@ -31,7 +32,7 @@ public class SpringDamperScript : MonoBehaviour
         totalAcc = 0f;
         totalAcc += gravity;
 
-        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDist);
+        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDist, interactableLayers);
 
         if (isGrounded)
         {
@@ -74,7 +75,7 @@ public class SpringDamperScript : MonoBehaviour
     {
         return posY;
     }
-    
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.darkRed;

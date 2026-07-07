@@ -12,10 +12,8 @@ public class Rotator : MonoBehaviour
     void Start()
     {
         hazard = GetComponent<Hazard>();
-        rotationSpeed= hazard.Data.rotationSpeed;
-        knockBackLerp_Seconds = hazard.Data.KnockBackDuration;
-        knockBackPoint = hazard.GetKnockBackPoint();
-        
+        rotationSpeed = hazard.Data.rotationSpeed;
+
         rb = GetComponent<Rigidbody>();
         rotationSpeed = rotationSpeed * Mathf.Deg2Rad;
 

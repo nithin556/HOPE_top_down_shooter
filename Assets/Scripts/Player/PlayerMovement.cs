@@ -1,3 +1,5 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -5,29 +7,74 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameInput gameInput;
     [SerializeField] private Camera main_camera;
     [SerializeField] private float moveSpeed;
+    private float initialMoveSpeed;
+    private float inititalRotationSpeed;
     [SerializeField] private float rotateSpeed;
     [SerializeField] private float MaxDistanceSphereCast;
     [SerializeField] private LayerMask wallLayerMask;
+    [SerializeField] private float moveReduceTime = 2.0f;
     private SpringDamperScript springDamperScript;
+    private ForcePushBack forcePushBack;
     private Vector3 movedir;
+    public bool moveHitReduce { get; private set; }
     public bool playerControlled;
+    float deltaTimerCount;
     private void Start()
     {
         springDamperScript = GetComponent<SpringDamperScript>();
+        moveHitReduce = false;
+        initialMoveSpeed = moveSpeed;
+        inititalRotationSpeed = rotateSpeed;
+    }
+    void OnEnable()
+    {
+        forcePushBack = GetComponent<ForcePushBack>();
+        forcePushBack.ReduceMovement += OnReduceMovement;
+    }
+    void OnDisable()
+    {
+        forcePushBack.ReduceMovement -= OnReduceMovement;
     }
 
     void Update()
     {
         if (playerControlled)
         {
+            SlowMovement();
             Movement();
+        }
+
+    }
+
+    private void SlowMovement()
+    {
+        if (moveHitReduce)
+        {
+            deltaTimerCount += Time.deltaTime;
+            moveSpeed = initialMoveSpeed / 3;
+            rotateSpeed = inititalRotationSpeed / 3;
+            if (deltaTimerCount > moveReduceTime)
+            {
+                moveHitReduce = false;
+                deltaTimerCount = 0;
+                moveSpeed = initialMoveSpeed;
+                rotateSpeed = inititalRotationSpeed;
+            }
+        }
+    }
+
+    private void OnReduceMovement(object sender, EventArgs eventArgs)
+    {
+        if (!moveHitReduce)
+        {
+            moveHitReduce = true;
         }
     }
 
     private void Movement()
     {
         BasicMovement();
-        if(springDamperScript.enabled == true)
+        if (springDamperScript.enabled == true)
         {
             transform.position = springDamperScript.GetSpringDampPos() + (movedir * moveSpeed * Time.deltaTime);
         }
@@ -51,9 +98,9 @@ public class PlayerMovement : MonoBehaviour
         movedir = refactoredInput.z * cam_forward + refactoredInput.x * cam_right;
 
         //slide along wall
-        if(Physics.SphereCast(transform.position,0.5f,movedir, out RaycastHit hit, MaxDistanceSphereCast, wallLayerMask))
+        if (Physics.SphereCast(transform.position, 0.5f, movedir, out RaycastHit hit, MaxDistanceSphereCast, wallLayerMask))
         {
-            movedir = Vector3.ProjectOnPlane(movedir,hit.normal).normalized;
+            movedir = Vector3.ProjectOnPlane(movedir, hit.normal).normalized;
         }
     }
 

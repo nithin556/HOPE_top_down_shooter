@@ -7,13 +7,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform levelRESpawnPoint;
     private PlayerHealth playerHealth;
     private ForcePushBack forcePushBack;
+    public event EventHandler<HealthEventDataPass> HealthChangeUI;
 
     void OnEnable()
     {
         playerHealth = player.GetComponent<PlayerHealth>();
         forcePushBack = player.GetComponent<ForcePushBack>();
         forcePushBack.OnDeath += levelRespawn;
-        
+        playerHealth.HealthChange += OnHealthChange;
+
     }
     void OnDisable()
     {
@@ -21,12 +23,24 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-
+        playerHealth.HealthReset();
     }
 
-    private void levelRespawn(object sender,EventArgs eventArgs)
+    private void levelRespawn(object sender, EventArgs eventArgs)
     {
-        forcePushBack.GetLevelRespawn(levelRESpawnPoint.position,2f,true);
+        forcePushBack.GetLevelRespawn(levelRESpawnPoint.position, 2f, true);
+    }
+
+    private void OnHealthChange(object sender, EventArgs eventArgs)
+    {
+        //Debug.Log("Health : " + playerHealth.health);
+
+
+        HealthChangeUI?.Invoke(this, new HealthEventDataPass
+        {
+            playerHealthGM = playerHealth.health
+        });
+
     }
 
 }
