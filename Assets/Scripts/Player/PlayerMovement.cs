@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -14,11 +15,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask wallLayerMask;
     [SerializeField] private float moveReduceTime = 2.0f;
     private SpringDamperScript springDamperScript;
-    private ForcePushBack forcePushBack;
+    private PlayerRespawnerScript playerRespawnerScript;
     private Vector3 movedir;
+    private float currentSpeedMultiplier = 1f;
     public bool moveHitReduce { get; private set; }
     public bool playerControlled;
     float deltaTimerCount;
+    private Coroutine ActiveSlowRoutine;
     private void Start()
     {
         springDamperScript = GetComponent<SpringDamperScript>();
@@ -26,63 +29,46 @@ public class PlayerMovement : MonoBehaviour
         initialMoveSpeed = moveSpeed;
         inititalRotationSpeed = rotateSpeed;
     }
-    void OnEnable()
-    {
-        forcePushBack = GetComponent<ForcePushBack>();
-        forcePushBack.ReduceMovement += OnReduceMovement;
-    }
-    void OnDisable()
-    {
-        forcePushBack.ReduceMovement -= OnReduceMovement;
-    }
 
     void Update()
     {
         if (playerControlled)
         {
-            SlowMovement();
             Movement();
         }
-
     }
 
-    private void SlowMovement()
+    public void MoveReduction(float slow_Movement_Multiplier, float slow_Movement_Duration)
     {
-        if (moveHitReduce)
+        if (ActiveSlowRoutine != null)
         {
-            deltaTimerCount += Time.deltaTime;
-            moveSpeed = initialMoveSpeed / 3;
-            rotateSpeed = inititalRotationSpeed / 3;
-            if (deltaTimerCount > moveReduceTime)
-            {
-                moveHitReduce = false;
-                deltaTimerCount = 0;
-                moveSpeed = initialMoveSpeed;
-                rotateSpeed = inititalRotationSpeed;
-            }
+            StopCoroutine(ActiveSlowRoutine);
         }
+        ActiveSlowRoutine = StartCoroutine(SpeedModifierRoutine(slow_Movement_Multiplier, slow_Movement_Duration));
     }
 
-    private void OnReduceMovement(object sender, EventArgs eventArgs)
+    public IEnumerator SpeedModifierRoutine(float slow_Movement_Multiplier, float slow_Movement_Duration)
     {
-        if (!moveHitReduce)
-        {
-            moveHitReduce = true;
-        }
-    }
+        currentSpeedMultiplier = slow_Movement_Multiplier;
+        yield return new WaitForSeconds(slow_Movement_Duration);
 
+        currentSpeedMultiplier = 1f;
+        ActiveSlowRoutine = null;
+    }
     private void Movement()
     {
+        float finalNewSpeed = moveSpeed * currentSpeedMultiplier;
+        float finalRotateSpeed = rotateSpeed * currentSpeedMultiplier;
         BasicMovement();
         if (springDamperScript.enabled == true)
         {
-            transform.position = springDamperScript.GetSpringDampPos() + (movedir * moveSpeed * Time.deltaTime);
+            transform.position = springDamperScript.GetSpringDampPos() + (movedir * finalNewSpeed * Time.deltaTime);
         }
         else
         {
-            transform.position += movedir * moveSpeed * Time.deltaTime;
+            transform.position += movedir * finalNewSpeed * Time.deltaTime;
         }
-        SmoothRotate();
+        SmoothRotate(finalRotateSpeed);
     }
     private void BasicMovement()
     {
@@ -104,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void SmoothRotate()
+    private void SmoothRotate(float finalRotateSpeed)
     {
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation;
@@ -116,6 +102,6 @@ public class PlayerMovement : MonoBehaviour
         {
             targetRotation = transform.rotation;
         }
-        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotateSpeed);
+        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * finalRotateSpeed);
     }
 }

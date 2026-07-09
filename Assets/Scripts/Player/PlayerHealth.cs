@@ -1,27 +1,71 @@
 using System;
+using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    public int health { get; private set; }
+    public float health { get; private set; }
+    private bool isInvincible;
+    public float invincibility_Time { get; set; }
+    private bool is_Sheilded;
+    private float shield_Duration;
+    private Coroutine shieldActiveCoroutine;
     public event EventHandler HealthChange;
+    public event EventHandler OnDie;
 
     void Start()
     {
         health = 100;
     }
 
-    public void TakeDamage(int damageAmount)
+    public bool TakeDamage(float damageAmount)
     {
-        health -= damageAmount;
+        if (is_Sheilded) return false;
+        if (isInvincible) return false;
 
-        if (health < 0)
-        {
-            health = 0;
-        }
+        health -= damageAmount;
         HealthChange?.Invoke(this, EventArgs.Empty);
 
+        if (health <= 0)
+        {
+            health = 0;
+            OnDie?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            StartCoroutine(InvincibilityRoutine());
+        }
+
+        return true;
     }
+    public void Shield(float shield_Duration)
+    {
+        is_Sheilded = true;
+        if (shieldActiveCoroutine != null)
+        {
+            Debug.Log("Shield already up");
+        }
+        else
+        {
+            shieldActiveCoroutine = StartCoroutine(ShieldRoutine(shield_Duration));
+        }
+    }
+
+    private IEnumerator InvincibilityRoutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibility_Time);
+        isInvincible = false;
+    }
+    private IEnumerator ShieldRoutine(float shield_Duration)
+    {
+        yield return new WaitForSeconds(shield_Duration);
+        is_Sheilded = false;
+        shieldActiveCoroutine = null;
+    }
+
+
     public void HealthReset()
     {
         health = 100;

@@ -1,4 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/healthBar.uss?fileID=7433441132597879392&amp;guid=40a6c799dd76749478cc6f5bed6f7e89&amp;type=3#healthBar"/>
-    <ui:ProgressBar value="100" title="" name="HealthBar" style="width: 500px; height: 30px; opacity: 0.75; background-image: none;"/>
+    <ui:ProgressBar value="100" title="" name="HealthBar" style="width: 500px; height: 30px; opacity: 0.75; background-image: none; transition-delay: 0s; transition-duration: 0s;"/>
+    <ui:Label text="Label" name="Time" style="background-color: rgb(236, 236, 236); width: 111px; height: 54px; -unity-text-align: middle-center;"/>
 </ui:UXML>

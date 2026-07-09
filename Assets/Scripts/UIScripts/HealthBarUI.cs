@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements; // Required for UI Toolkit
 
@@ -5,38 +6,39 @@ public class HealthBarController : MonoBehaviour
 {
     private PanelRenderer panelRenderer;
     private ProgressBar healthBar;
+    private Label x;
 
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] private PlayerHealth playerHealth;
 
     void Awake()
     {
-        // 1. Get the new PanelRenderer component
         panelRenderer = GetComponent<PanelRenderer>();
     }
 
     void OnEnable()
     {
-        // 2. Register to the brand new 6.5 reload callback
         panelRenderer.RegisterUIReloadCallback(OnUIReload);
-        gameManager.HealthChangeUI += OnHealthChangeUI;
+        playerHealth.HealthChange += OnHealthChangeUI;
     }
 
     void OnDisable()
     {
         // Always clean up your callbacks when disabled
         panelRenderer.UnregisterUIReloadCallback(OnUIReload);
-        gameManager.HealthChangeUI -= OnHealthChangeUI;
+        playerHealth.HealthChange -= OnHealthChangeUI;
     }
 
-    // 3. Unity automatically passes the live 'root' element into this function
     private void OnUIReload(PanelRenderer renderer, VisualElement root)
     {
-        // 4. Safely query your elements here!
-        // NOTE: Make sure "ProgressBar" matches the exact Name property in UI Builder
         healthBar = root.Q<ProgressBar>("HealthBar");
+        x = root.Q<Label>("Time");
     }
-    void OnHealthChangeUI(object sender, HealthEventDataPass healthEventDataPass)
+    void Update()
     {
-        healthBar.value = healthEventDataPass.playerHealthGM;
+        x.text = Time.time.ToString();
+    }
+    void OnHealthChangeUI(object sender, EventArgs eventArgs)
+    {
+        healthBar.value = playerHealth.health;
     }
 }
