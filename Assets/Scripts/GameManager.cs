@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         playerHealth = player.GetComponent<PlayerHealth>();
-        playerHealth.HealthReset();
 
     }
     void Update()

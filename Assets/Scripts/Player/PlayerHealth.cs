@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using NUnit.Framework;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
@@ -41,15 +40,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     }
     public void Shield(float shield_Duration)
     {
-        is_Sheilded = true;
         if (shieldActiveCoroutine != null)
         {
             Debug.Log("Shield already up");
+            return;
         }
-        else
-        {
-            shieldActiveCoroutine = StartCoroutine(ShieldRoutine(shield_Duration));
-        }
+        shieldActiveCoroutine = StartCoroutine(ShieldRoutine(shield_Duration));
     }
 
     private IEnumerator InvincibilityRoutine()
@@ -60,6 +56,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     }
     private IEnumerator ShieldRoutine(float shield_Duration)
     {
+        is_Sheilded = true;
         yield return new WaitForSeconds(shield_Duration);
         is_Sheilded = false;
         shieldActiveCoroutine = null;

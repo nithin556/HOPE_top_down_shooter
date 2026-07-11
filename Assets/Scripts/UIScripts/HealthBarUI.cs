@@ -6,7 +6,7 @@ public class HealthBarController : MonoBehaviour
 {
     private PanelRenderer panelRenderer;
     private ProgressBar healthBar;
-    private Label x;
+    private Label time_Passed;
 
     [SerializeField] private PlayerHealth playerHealth;
 
@@ -31,11 +31,11 @@ public class HealthBarController : MonoBehaviour
     private void OnUIReload(PanelRenderer renderer, VisualElement root)
     {
         healthBar = root.Q<ProgressBar>("HealthBar");
-        x = root.Q<Label>("Time");
+        time_Passed = root.Q<Label>("Time");
     }
     void Update()
     {
-        x.text = Time.time.ToString();
+        time_Passed.text = Time.time.ToString();
     }
     void OnHealthChangeUI(object sender, EventArgs eventArgs)
     {

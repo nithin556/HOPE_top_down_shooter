@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f03a2b9e54514ab196b57d3ef9449d6, type: 3}
   m_Name: HighDamageRotate
   m_EditorClassIdentifier: Assembly-CSharp::HazardData
-  damageAmount: 100
-  slow_Movement_Multiplier: 0.3
+  damageAmount: 200
+  invincibility_Time: 1
+  slow_Movement_Multiplier: 0.302
   slow_Movement_Duration: 2
