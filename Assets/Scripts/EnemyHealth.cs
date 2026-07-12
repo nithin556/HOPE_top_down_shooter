@@ -20,14 +20,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (is_Sheilded) return false;
         if (isInvincible) return false;
 
-        Debug.Log("Enemy health: " + health);
         health -= damageAmount;
+        Debug.Log("Enemy health: " + health);
         EnemyHealthChange?.Invoke(this, EventArgs.Empty);
 
         if (health <= 0)
         {
             health = 0;
             // on enemy death sequence 
+            Destroy(gameObject);
         }
         else if (invincibility_Time > 0)
         {

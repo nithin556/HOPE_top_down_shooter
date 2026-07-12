@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: lowDamage
   m_EditorClassIdentifier: Assembly-CSharp::HazardData
   damageAmount: 20
-  invincibility_Time: 0
+  invincibility_Time: 1
   slow_Movement_Multiplier: 1
   slow_Movement_Duration: 0

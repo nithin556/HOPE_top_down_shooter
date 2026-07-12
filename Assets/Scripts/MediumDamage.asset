@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f03a2b9e54514ab196b57d3ef9449d6, type: 3}
   m_Name: MediumDamage
   m_EditorClassIdentifier: Assembly-CSharp::HazardData
-  damageAmount: 34
+  damageAmount: 10
   invincibility_Time: 0
-  slow_Movement_Multiplier: 0.4
-  slow_Movement_Duration: 0.7
+  slow_Movement_Multiplier: 0.7
+  slow_Movement_Duration: 1
