@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 5598755676394057513}
   - component: {fileID: 1983607715754445837}
   - component: {fileID: 7825341099414375129}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &5598755676394057513
 Transform:
@@ -28,8 +28,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2.4217896, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 700, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1226540637363558319}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
@@ -101,12 +101,12 @@ GameObject:
   - component: {fileID: 7521737838322062945}
   - component: {fileID: 5641225142413464492}
   - component: {fileID: 1960592852214423510}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube.013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &7521737838322062945
 Transform:
@@ -117,8 +117,8 @@ Transform:
   m_GameObject: {fileID: 6844151400332301401}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 5.002315, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalPosition: {x: -0.035698, y: 5.002315, z: 0}
+  m_LocalScale: {x: 700, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1226540637363558319}
@@ -189,12 +189,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1226540637363558319}
-  m_Layer: 0
+  - component: {fileID: 7783258392706346360}
+  m_Layer: 6
   m_Name: brainstorm_hope_walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &1226540637363558319
 Transform:
@@ -206,10 +207,31 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.2, y: 0, z: 5.92}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0.56}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5598755676394057513}
   - {fileID: 7521737838322062945}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7783258392706346360
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7001438132822659588}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 70.8, y: 6.88, z: 4.64}
+  m_Center: {x: 0, y: 3.02, z: -0.17}
